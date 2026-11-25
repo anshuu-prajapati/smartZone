@@ -1,0 +1,16 @@
+{
+  "rooms": [
+    {
+      "id": "room101",
+      "name": "Room 101 (prototype)",
+      "zones": ["A front-left", "B front-right", "C back-left", "D back-right"],
+      "circuits": [
+        { "name": "Lights, front row", "kind": "relay", "zones": [0, 1], "watts": 160, "duty": 1.0 },
+        { "name": "Lights, back row", "kind": "relay", "zones": [2, 3], "watts": 160, "duty": 1.0 },
+        { "name": "Fans, left side", "kind": "relay", "zones": [0, 2], "watts": 150, "duty": 1.0 },
+        { "name": "Fans, right side", "kind": "relay", "zones": [1, 3], "watts": 150, "duty": 1.0 },
+        { "name": "Split AC", "kind": "ir_ac", "zones": [0, 1, 2, 3], "watts": 1500, "duty": 0.65 }
+      ]
+    }
+  ]
+}

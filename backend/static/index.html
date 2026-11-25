@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartZone Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <h1>SmartZone</h1>
+    </div>
+    <div class="topbar-right">
+      <label class="sr-only" for="room-select">Room</label>
+      <select id="room-select"></select>
+      <span id="online-badge" class="badge badge-muted">connecting…</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel" aria-labelledby="zones-title">
+      <div class="panel-head">
+        <h2 id="zones-title">Zones</h2>
+        <div class="legend">
+          <span><i class="dot dot-present"></i>Occupied</span>
+          <span><i class="dot dot-hold"></i>Off-delay</span>
+          <span><i class="dot dot-empty"></i>Empty</span>
+        </div>
+      </div>
+      <div id="zone-map" class="zone-map"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="circuits-title">
+      <div class="panel-head">
+        <h2 id="circuits-title">Circuits</h2>
+        <span id="config-state" class="muted small"></span>
+      </div>
+      <div id="circuits" class="circuits"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="energy-title">
+      <div class="panel-head">
+        <h2 id="energy-title">Energy</h2>
+        <div class="seg" role="group" aria-label="Time window">
+          <button type="button" data-hours="24" class="active">24 h</button>
+          <button type="button" data-hours="168">7 days</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Used</span><span id="e-used" class="stat-value">–</span></div>
+        <div class="stat"><span class="stat-label">Room-switch baseline</span><span id="e-base" class="stat-value">–</span></div>
+        <div class="stat"><span class="stat-label">Saved</span><span id="e-saved" class="stat-value">–</span></div>
+        <div class="stat"><span class="stat-label">Data coverage</span><span id="e-cov" class="stat-value">–</span></div>
+      </div>
+      <div id="chart" class="chart" role="img" aria-label="Hourly energy used versus baseline"></div>
+      <p class="muted small">
+        Baseline = the same room with ordinary switches, with everything on whenever anyone is in the room.
+        Periods with no data from the device are left out, not estimated.
+      </p>
+    </section>
+
+    <section class="panel" aria-labelledby="settings-title">
+      <div class="panel-head"><h2 id="settings-title">Settings</h2></div>
+      <form id="delay-form" class="row">
+        <label for="off-delay">Off-delay (seconds, 30–1800)</label>
+        <input id="off-delay" type="number" min="30" max="1800" step="10" required>
+        <button type="submit">Save</button>
+      </form>
+      <div id="admin-row" class="row" hidden>
+        <label for="admin-key">Admin key</label>
+        <input id="admin-key" type="password" autocomplete="off">
+      </div>
+      <p id="settings-msg" class="muted small" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="events-title">
+      <div class="panel-head"><h2 id="events-title">Recent device reports</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>Reason</th><th>Occupied zones</th><th>Circuits on</th></tr></thead>
+          <tbody id="events"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
