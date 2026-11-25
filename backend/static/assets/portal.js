@@ -234,6 +234,7 @@
     { name: "07_Team_Details.pdf", title: "Team details", desc: "Team and contact information." },
     { name: "08_Project_Screenshots", title: "Project screenshots", desc: "Portal, prototype and dashboard.", dir: true },
     { name: "09_Pitch_Script.pdf", title: "Pitch script", desc: "Timed script for the spoken pitch." },
+    { name: "10_Tools_and_Components", title: "Tools and components", desc: "Hardware and software images with credits.", dir: true, anchor: "#build-kit" },
   ];
 
   function fmtSize(bytes) {
@@ -258,8 +259,8 @@
       let meta = "Coming soon";
       let href = null;
       if (f && d.dir) {
-        meta = `${(f.children || []).length} images`;
-        href = "#media-row";
+        meta = `${(f.children || []).filter((c) => /\.(png|jpe?g)$/i.test(c.name)).length} images`;
+        href = d.anchor || "#media-row";
       } else if (f) {
         meta = `${label} · ${fmtSize(f.size)}`;
         href = f.url;
@@ -294,6 +295,68 @@
     }
   }
 
+  // ---- Build kit --------------------------------------------------------------------
+  const KIT_DIR = "/downloads/10_Tools_and_Components/";
+  const KIT_NAMES = {
+    hw_01: "ESP32 controller",
+    hw_02: "ESP32 DevKit pinout",
+    hw_03: "Relay module",
+    hw_04: "Infrared LED",
+    hw_05: "IR receiver (TSOP)",
+    hw_06: "2N2222 transistor",
+    hw_07: "Breadboard",
+    hw_08: "Jumper wires",
+    sw_01: "Arduino IDE 2",
+    sw_02: "Python",
+    sw_03: "FastAPI",
+    sw_04: "Caddy",
+    sw_05: "GitHub",
+    sw_06: "GitHub Actions",
+  };
+
+  function kitCard(item) {
+    const key = item.file.slice(0, 5);
+    const credit = el("div", { class: "kit-credit" }, [
+      "Image: ",
+      el("a", { href: item.source, target: "_blank", rel: "noopener", text: item.author }),
+      " · ",
+      item.license_url
+        ? el("a", { href: item.license_url, target: "_blank", rel: "noopener", text: item.license })
+        : item.license,
+    ]);
+    return el("article", { class: "card kit-card" }, [
+      el("div", { class: "kit-media" }, [
+        el("img", { src: KIT_DIR + encodeURIComponent(item.file), alt: KIT_NAMES[key] || item.caption, loading: "lazy" }),
+      ]),
+      el("div", { class: "kit-body" }, [
+        el("div", { class: "kit-name", text: KIT_NAMES[key] || item.file }),
+        el("div", { class: "kit-role", text: item.caption }),
+        credit,
+      ]),
+    ]);
+  }
+
+  function pendingCard(name, role) {
+    return el("article", { class: "card kit-card" }, [
+      el("div", { class: "kit-media pending", text: "Team photo coming with the hardware build" }),
+      el("div", { class: "kit-body" }, [el("div", { class: "kit-name", text: name }), el("div", { class: "kit-role", text: role })]),
+    ]);
+  }
+
+  async function initKit() {
+    let items = [];
+    try {
+      const res = await fetch(KIT_DIR + "credits.json");
+      if (res.ok) items = await res.json();
+    } catch (_) { /* section stays with pending cards only */ }
+    const hw = items.filter((i) => i.file.startsWith("hw_")).map(kitCard);
+    hw.splice(Math.min(2, hw.length), 0, pendingCard(
+      "HLK-LD2410C mmWave sensor",
+      "24 GHz presence radar, one per zone. Detects people sitting still, which PIR sensors miss."));
+    $("kit-hw").replaceChildren(...hw);
+    $("kit-sw").replaceChildren(...items.filter((i) => i.file.startsWith("sw_")).map(kitCard));
+  }
+
   async function init() {
     try {
       const res = await fetch("/api/rooms");
@@ -305,6 +368,7 @@
     initSim();
     initLive();
     initDownloads();
+    initKit();
   }
 
   init();

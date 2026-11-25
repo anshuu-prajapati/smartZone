@@ -90,6 +90,22 @@ section.block { padding-block: 88px 0; }
 .pipeline .step { display: inline-flex; align-items: center; gap: 8px; }
 .pipeline .step + .step::before { content: "→"; color: var(--muted); }
 
+/* Build kit */
+.kit-group { font-size: 1rem; margin: 8px 0 12px; color: var(--muted); font-family: var(--font-body); font-weight: 600; }
+.kit-group + .kit { margin-bottom: 28px; }
+.kit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .kit { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .kit { grid-template-columns: 1fr; } }
+.kit-card { display: grid; grid-template-rows: auto 1fr; overflow: hidden; }
+.kit-media { position: relative; aspect-ratio: 16 / 10; background: #ffffff; border-bottom: 1px solid var(--line); display: grid; place-items: center; }
+.kit-media img { position: absolute; inset: 14px; width: calc(100% - 28px); height: calc(100% - 28px); object-fit: contain; display: block; }
+.kit-media.pending { background: var(--surface-2); color: var(--muted); font: 500 0.8rem/1.4 var(--font-mono); text-align: center; }
+.kit-body { padding: 14px; display: grid; gap: 6px; align-content: start; }
+.kit-name { font-weight: 600; }
+.kit-role { font-size: 0.86rem; color: var(--muted); }
+.kit-credit { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+.kit-credit a { color: var(--muted); }
+
 /* Decisions */
 .decisions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 @media (max-width: 760px) { .decisions { grid-template-columns: 1fr; } }
@@ -108,7 +124,7 @@ section.block { padding-block: 88px 0; }
 .live h3 { font-size: 1.2rem; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
 /* Downloads */
-.downloads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.downloads { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 900px) { .downloads { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .downloads { grid-template-columns: 1fr; } }
 .dl { padding: 16px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; text-decoration: none; color: inherit; transition: border-color 0.15s, transform 0.15s; }

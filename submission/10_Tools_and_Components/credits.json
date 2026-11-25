@@ -1,0 +1,128 @@
+[
+  {
+    "file": "hw_01_esp32_wroom32_module.jpg",
+    "caption": "ESP32 (ESP-WROOM-32) Wi-Fi module, the controller at the heart of each room",
+    "title": "Espressif ESP-WROOM-32 Wi-Fi & Bluetooth Module.jpg",
+    "author": "Brian Krent",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Espressif_ESP-WROOM-32_Wi-Fi_%26_Bluetooth_Module.jpg"
+  },
+  {
+    "file": "hw_02_esp32_devkit_pinout.png",
+    "caption": "ESP32 DevKit pinout, used for the wiring plan",
+    "title": "ESP32-Devkit-Pinout-Rev-12-9600p.png",
+    "author": "Vishnu Maiea",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:ESP32-Devkit-Pinout-Rev-12-9600p.png"
+  },
+  {
+    "file": "hw_03_relay_module_srd05vdc.jpg",
+    "caption": "5 V relay module with SRD-05VDC relay (1-channel shown; SmartZone uses a 4-channel board with the same relays) for lights and fans",
+    "title": "SRD-05VDC-SL-C 5V one-channel relay module.jpg",
+    "author": "Suyash Dwivedi",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:SRD-05VDC-SL-C_5V_one-channel_relay_module.jpg"
+  },
+  {
+    "file": "hw_04_infrared_led.jpg",
+    "caption": "Infrared LED that sends commands to the split AC",
+    "title": "IR led.jpg",
+    "author": "Mr.checker",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:IR_led.jpg"
+  },
+  {
+    "file": "hw_05_ir_receiver_tsop1738.jpg",
+    "caption": "TSOP IR receiver (TSOP1738 shown; SmartZone uses the TSOP1838 from the same family) for capturing the AC remote's codes",
+    "title": "TSOP1738 infrared (IR) receiver sensor (1).jpg",
+    "author": "Suyash Dwivedi",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:TSOP1738_infrared_(IR)_receiver_sensor_(1).jpg"
+  },
+  {
+    "file": "hw_06_2n2222_transistor.jpg",
+    "caption": "2N2222 transistor that drives the IR LED (check the pin order: P2N2222A is reversed)",
+    "title": "2N2222, PN2222, and P2N2222 BJT Pinout.jpg",
+    "author": "AntonKrugerAtUiowa",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:2N2222,_PN2222,_and_P2N2222_BJT_Pinout.jpg"
+  },
+  {
+    "file": "hw_07_breadboard.jpg",
+    "caption": "Breadboard for prototyping",
+    "title": "400 points breadboard.jpg",
+    "author": "oomlout",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:400_points_breadboard.jpg"
+  },
+  {
+    "file": "hw_08_jumper_wires.jpg",
+    "caption": "Jumper wires",
+    "title": "A few Jumper Wires.jpg",
+    "author": "oomlout",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:A_few_Jumper_Wires.jpg"
+  },
+  {
+    "file": "sw_01_arduino_ide_2.png",
+    "caption": "Arduino IDE 2, used to write and upload the ESP32 firmware",
+    "title": "Ide-2-overview.png",
+    "author": "Karl Söderby & Jacob Hylén",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Ide-2-overview.png"
+  },
+  {
+    "file": "sw_02_python_logo.png",
+    "caption": "Python, the backend language",
+    "title": "Python-logo-notext.svg",
+    "author": "www.python.org",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Python-logo-notext.svg"
+  },
+  {
+    "file": "sw_03_fastapi_logo.png",
+    "caption": "FastAPI, the backend web framework",
+    "title": "FastAPI logo.svg",
+    "author": "Sebastián Ramírez",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:FastAPI_logo.svg"
+  },
+  {
+    "file": "sw_04_caddy_logo.png",
+    "caption": "Caddy, the HTTPS web server in front of the backend",
+    "title": "Caddyserver logo light.svg",
+    "author": "Caddy",
+    "license": "Public domain",
+    "license_url": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Caddyserver_logo_light.svg"
+  },
+  {
+    "file": "sw_05_github_mark.png",
+    "caption": "GitHub, where the code lives",
+    "title": "Octicons-mark-github.svg",
+    "author": "GitHub",
+    "license": "MIT",
+    "license_url": "http://opensource.org/licenses/mit-license.php",
+    "source": "https://commons.wikimedia.org/wiki/File:Octicons-mark-github.svg"
+  },
+  {
+    "file": "sw_06_github_actions.png",
+    "caption": "GitHub Actions, which tests and deploys every push",
+    "title": "GitHub Actions.png",
+    "author": "Mohamed Hassan",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:GitHub_Actions.png"
+  }
+]
