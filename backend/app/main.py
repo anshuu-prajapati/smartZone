@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import secrets
 from pathlib import Path
+from urllib.parse import quote
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
@@ -170,7 +171,30 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         room = get_room(room_id)
         return [report_out(r) for r in db.recent_reports(room.id, limit)]
 
+    @app.get("/api/downloads", tags=["portal"])
+    def downloads() -> list[dict]:
+        """Submission files served under /downloads/ (one level of sub-folders)."""
+        root = settings.submission_dir
+        if not root.is_dir():
+            return []
+        out = []
+        for p in sorted(root.iterdir()):
+            if p.name.startswith("."):
+                continue
+            if p.is_dir():
+                children = [
+                    {"name": c.name, "size": c.stat().st_size, "url": f"/downloads/{quote(p.name)}/{quote(c.name)}"}
+                    for c in sorted(p.iterdir())
+                    if c.is_file() and not c.name.startswith(".")
+                ]
+                out.append({"name": p.name, "is_dir": True, "children": children})
+            else:
+                out.append({"name": p.name, "is_dir": False, "size": p.stat().st_size, "url": f"/downloads/{quote(p.name)}"})
+        return out
+
+    if settings.submission_dir.is_dir():
+        app.mount("/downloads", StaticFiles(directory=settings.submission_dir), name="downloads")
     if STATIC_DIR.is_dir():
-        app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="dashboard")
+        app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="site")
 
     return app

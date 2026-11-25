@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SmartZone · Live dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f7a62'/%3E%3Crect x='6' y='6' width='9' height='9' rx='2' fill='%23fff'/%3E%3Crect x='17' y='17' width='9' height='9' rx='2' fill='%23fff'/%3E%3Crect x='17' y='6' width='9' height='9' rx='2' fill='%23fff' opacity='.35'/%3E%3Crect x='6' y='17' width='9' height='9' rx='2' fill='%23fff' opacity='.35'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="/" aria-label="SmartZone portal"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>SmartZone</a>
+      <nav class="nav-links" aria-label="Site">
+        <a href="/">Portal</a>
+        <a href="/#prototype" class="hide-sm">Prototype</a>
+        <a href="/dashboard/" aria-current="page">Live dashboard</a>
+        <a href="/docs" class="hide-sm">API</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container dash">
+    <div class="dash-head">
+      <div class="dash-title">
+        <span class="eyebrow">Live dashboard</span>
+        <div class="title-row">
+          <label class="sr-only" for="room-select">Room</label>
+          <select id="room-select"></select>
+          <span id="online-pill" class="pill pill-off">connecting…</span>
+        </div>
+        <p class="muted small" id="last-seen">&nbsp;</p>
+      </div>
+      <div class="head-meta">
+        <div class="kv"><span>Off-delay</span><strong id="meta-delay">–</strong></div>
+        <div class="kv"><span>Occupied zones</span><strong id="meta-zones">–</strong></div>
+        <div class="kv"><span>Circuits on</span><strong id="meta-circuits">–</strong></div>
+        <div class="kv"><span>Settings</span><strong id="meta-config">–</strong></div>
+      </div>
+    </div>
+
+    <div class="card waiting" id="waiting" hidden>
+      <div>
+        <h2>Waiting for the room's controller</h2>
+        <p class="muted">The server is running. As soon as the ESP32 in this room sends its first report, the floor plan, circuits and energy figures below fill in live. Until then you can try the same logic in the interactive prototype.</p>
+      </div>
+      <a class="btn btn-primary" href="/#prototype">Open the prototype</a>
+    </div>
+
+    <div class="dash-grid">
+      <section class="card panel" aria-labelledby="room-title">
+        <div class="panel-head">
+          <h2 id="room-title">Room</h2>
+          <div class="board-legend">
+            <span><i style="background:var(--accent)"></i>Occupied / on</span>
+            <span><i style="background:var(--hold)"></i>Off-delay</span>
+            <span><i style="background:var(--off)"></i>Empty / off</span>
+          </div>
+        </div>
+        <div id="board"></div>
+      </section>
+
+      <section class="card panel" aria-labelledby="circuits-title">
+        <div class="panel-head">
+          <h2 id="circuits-title">Circuits</h2>
+          <span class="muted small" id="config-state"></span>
+        </div>
+        <div class="circuits" id="circuits"></div>
+        <p class="muted small">Auto follows the zones. On and Off are manual overrides; the controller applies them on its next report.</p>
+      </section>
+    </div>
+
+    <section class="card panel" aria-labelledby="energy-title">
+      <div class="panel-head">
+        <h2 id="energy-title">Energy</h2>
+        <div class="seg" role="group" aria-label="Time window" id="window">
+          <button type="button" data-hours="24" class="active">24 h</button>
+          <button type="button" data-hours="168">7 days</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">Used</span><span class="stat-value" id="e-used">–</span></div>
+        <div class="stat"><span class="stat-label">Room-switch baseline</span><span class="stat-value" id="e-base">–</span></div>
+        <div class="stat"><span class="stat-label">Saved</span><span class="stat-value good" id="e-saved">–</span><span class="stat-sub" id="e-saved-pct"></span></div>
+        <div class="stat"><span class="stat-label">Data coverage</span><span class="stat-value" id="e-cov">–</span></div>
+      </div>
+      <div class="chart" id="chart" role="img" aria-label="Hourly energy used compared with baseline"></div>
+      <div class="chart-legend small muted">
+        <span>kWh per hour:</span>
+        <span><i style="background:var(--accent)"></i>Used</span>
+        <span><i style="background:var(--off-soft);border:1px solid var(--line)"></i>Room-switch baseline</span>
+        <span>Baseline = everything on whenever anyone is in the room. Periods without data are left out.</span>
+      </div>
+    </section>
+
+    <div class="dash-grid">
+      <section class="card panel" aria-labelledby="settings-title">
+        <div class="panel-head"><h2 id="settings-title">Settings</h2></div>
+        <form id="delay-form" class="form-row">
+          <div class="field">
+            <label for="off-delay">Off-delay in seconds (30–1800)</label>
+            <input id="off-delay" type="number" min="30" max="1800" step="10" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+        <div class="field" id="admin-field" hidden>
+          <label for="admin-key">Admin key (needed to change settings)</label>
+          <input id="admin-key" type="password" autocomplete="off" spellcheck="false">
+        </div>
+        <p id="settings-msg" class="small muted" aria-live="polite"></p>
+      </section>
+
+      <section class="card panel" aria-labelledby="events-title">
+        <div class="panel-head"><h2 id="events-title">Recent reports</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Time</th><th>Reason</th><th>Occupied</th><th>Circuits on</th></tr></thead>
+            <tbody id="events"><tr><td colspan="4" class="muted">No reports yet.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>SmartZone · live dashboard</span>
+      <span><a href="/">Portal</a> · <a href="/docs">API docs</a> · <a href="https://github.com/anshuu-prajapati/smartZone" target="_blank" rel="noopener">GitHub</a></span>
+    </div>
+  </footer>
+
+  <script src="/assets/board.js"></script>
+  <script src="/dashboard/dashboard.js"></script>
+</body>
+</html>

@@ -83,6 +83,58 @@ cd .. && pytest tools/audit
 g++ -std=c++17 -Wall -Wextra -I firmware/smartzone firmware/test/test_zone_logic.cpp -o zone_test && ./zone_test
 ```
 
+## Portal, prototype and submission files
+
+| URL | What it is |
+|---|---|
+| https://smartzone.anshu.tech | Project portal: problem, use cases, how it works, architecture, downloads |
+| https://smartzone.anshu.tech/#prototype | Interactive prototype: the firmware zone logic ported to JavaScript ([zone-logic.js](backend/static/assets/zone-logic.js)), proven equal by [tests/js/test_zone_logic.js](tests/js/test_zone_logic.js) |
+| https://smartzone.anshu.tech/dashboard/ | Live control dashboard for the real room |
+| https://smartzone.anshu.tech/downloads/ | Files from [submission/](submission/) (proposal, deck, video, diagram, screenshots, pitch script) |
+
+## CI/CD
+
+[.github/workflows/ci-cd.yml](.github/workflows/ci-cd.yml) runs on every push and pull request:
+
+| Job | Checks |
+|---|---|
+| Backend and audit tool tests | `pytest` in `backend/` and `tools/audit` |
+| Portal and dashboard checks | JS syntax + zone-logic parity test (JS port vs. firmware scenarios) |
+| Firmware zone logic tests | `g++ -Werror` build and run of `firmware/test/test_zone_logic.cpp` |
+| ESP32 firmware compile | `arduino-cli compile` for `esp32:esp32:esp32` with ArduinoJson and IRremoteESP8266 |
+| Deploy | On pushes to `main` after the test jobs pass: uploads `deploy/` over SSH, runs `deploy.sh`, then checks `/api/health` |
+
+Repository secrets used by the deploy job:
+
+| Secret | Value |
+|---|---|
+| `DEPLOY_SSH_KEY` | Private key of a deploy-only key pair whose public key is in the server's `~/.ssh/authorized_keys` |
+| `DEPLOY_HOST` | Server IP or host name |
+| `DEPLOY_USER` | SSH user (defaults to `ubuntu`) |
+| `DEPLOY_KNOWN_HOSTS` | Optional: output of `ssh-keyscan <host>`; pins the host key instead of scanning at deploy time |
+
+## Deployment (smartzone.anshu.tech)
+
+The live instance runs on an Ubuntu server behind Caddy, which handles HTTPS. The files are
+in [deploy/](deploy/):
+
+| File | Purpose |
+|---|---|
+| `deploy/deploy.sh` | Re-runnable: clones/updates `/opt/smartzone` from GitHub, builds the venv, generates keys once, installs the systemd unit, adds the Caddy site (backup + validate first) |
+| `deploy/smartzone.service` | uvicorn on `127.0.0.1:8020` as the `smartzone` user, hardened |
+| `deploy/Caddyfile.smartzone` | Caddy site block for `smartzone.anshu.tech` |
+
+Update after pushing to `main`:
+
+```bash
+scp -i nova.pem deploy/* ubuntu@<server>:/tmp/smartzone-deploy/
+ssh -i nova.pem ubuntu@<server> 'bash /tmp/smartzone-deploy/deploy.sh'
+```
+
+Keys live in `/var/lib/smartzone/smartzone.env` on the server (read with
+`sudo cat /var/lib/smartzone/smartzone.env`). Because the dashboard is public, the admin key is
+always set there: enter it in the dashboard's Settings panel to change anything.
+
 ## API
 
 | Method | Path | Used by | Purpose |

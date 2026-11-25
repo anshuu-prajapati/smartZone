@@ -1,0 +1,119 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend and audit tool tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+      - run: pip install -r backend/requirements-dev.txt
+      - name: Backend tests
+        working-directory: backend
+        run: pytest -q
+      - name: Audit tool tests
+        run: pytest -q tools/audit
+
+  web:
+    name: Portal and dashboard checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Syntax check
+        run: for f in backend/static/assets/*.js backend/static/dashboard/*.js; do node --check "$f"; done
+      - name: Zone logic parity (JS port vs firmware scenarios)
+        run: node tests/js/test_zone_logic.js
+
+  firmware-logic:
+    name: Firmware zone logic tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: g++ -std=c++17 -Wall -Wextra -Werror -I firmware/smartzone firmware/test/test_zone_logic.cpp -o zone_test
+      - run: ./zone_test
+
+  firmware-build:
+    name: ESP32 firmware compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.arduino15
+            ~/Arduino/libraries
+          key: arduino-esp32-${{ runner.os }}-v1
+      - uses: arduino/setup-arduino-cli@v2
+      - name: Install ESP32 core and libraries
+        run: |
+          arduino-cli config init --overwrite
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32
+          arduino-cli lib install ArduinoJson IRremoteESP8266
+      - name: Compile
+        run: |
+          cp firmware/smartzone/secrets.h.example firmware/smartzone/secrets.h
+          arduino-cli compile --fqbn esp32:esp32:esp32 --warnings default firmware/smartzone
+
+  deploy:
+    name: Deploy to smartzone.anshu.tech
+    needs: [backend, web, firmware-logic]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://smartzone.anshu.tech
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          test -n "$DEPLOY_SSH_KEY" || { echo "DEPLOY_SSH_KEY secret is not set"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          if [ -n "$DEPLOY_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "$DEPLOY_HOST" > ~/.ssh/known_hosts
+          fi
+      - name: Upload deploy files and run deploy script
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          target="${DEPLOY_USER:-ubuntu}@$DEPLOY_HOST"
+          ssh -i ~/.ssh/deploy_key "$target" 'mkdir -p /tmp/smartzone-deploy'
+          scp -i ~/.ssh/deploy_key deploy/deploy.sh deploy/smartzone.service deploy/Caddyfile.smartzone "$target":/tmp/smartzone-deploy/
+          ssh -i ~/.ssh/deploy_key "$target" 'bash /tmp/smartzone-deploy/deploy.sh'
+      - name: Health check
+        run: |
+          for i in $(seq 1 12); do
+            if curl -fsS https://smartzone.anshu.tech/api/health; then echo; exit 0; fi
+            sleep 5
+          done
+          echo "health check failed"; exit 1

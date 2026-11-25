@@ -1,0 +1,5 @@
+SmartZone live links
+
+Project portal:         https://smartzone.anshu.tech
+Live dashboard:         https://smartzone.anshu.tech/dashboard/
+Interactive prototype:  https://smartzone.anshu.tech/#prototype

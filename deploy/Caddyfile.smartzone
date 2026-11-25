@@ -1,0 +1,13 @@
+
+# SmartZone occupancy control (API + dashboard). Appended by smartzone/deploy/deploy.sh.
+# Caddy issues and renews the HTTPS certificate.
+smartzone.anshu.tech {
+	encode zstd gzip
+	request_body {
+		max_size 64KB
+	}
+	reverse_proxy 127.0.0.1:8020
+	log {
+		output file /var/log/caddy/smartzone.log
+	}
+}

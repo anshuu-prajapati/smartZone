@@ -109,3 +109,27 @@ def test_dashboard_served(client):
     r = client.get("/")
     assert r.status_code == 200
     assert "SmartZone" in r.text
+
+
+def test_live_dashboard_served(client):
+    r = client.get("/dashboard/")
+    assert r.status_code == 200
+    assert "Live dashboard" in r.text
+
+
+def test_downloads_listing(make_client, tmp_path):
+    sub = tmp_path / "submission"
+    (sub / "08_Project_Screenshots").mkdir(parents=True)
+    (sub / "05_GitHub_Link.txt").write_text("https://example.org\n", encoding="utf-8")
+    (sub / "08_Project_Screenshots" / "portal.png").write_bytes(b"\x89PNG")
+    client = make_client(submission_dir=sub)
+
+    files = {f["name"]: f for f in client.get("/api/downloads").json()}
+    assert files["05_GitHub_Link.txt"]["url"] == "/downloads/05_GitHub_Link.txt"
+    assert files["08_Project_Screenshots"]["children"][0]["name"] == "portal.png"
+    assert client.get("/downloads/05_GitHub_Link.txt").text.startswith("https://example.org")
+
+
+def test_downloads_empty_when_folder_missing(make_client, tmp_path):
+    client = make_client(submission_dir=tmp_path / "nope")
+    assert client.get("/api/downloads").json() == []

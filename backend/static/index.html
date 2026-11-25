@@ -2,90 +2,376 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SmartZone Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SmartZone · Power only where people are</title>
+  <meta name="description" content="SmartZone switches lights, fans and AC on only in the parts of a room where people are sitting. Occupancy-based, per-zone appliance control with mmWave sensors and an ESP32.">
+  <meta property="og:title" content="SmartZone: power only where people are">
+  <meta property="og:description" content="Per-zone control of lights, fans and AC for classrooms, libraries and offices.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/assets/portal.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f7a62'/%3E%3Crect x='6' y='6' width='9' height='9' rx='2' fill='%23fff'/%3E%3Crect x='17' y='17' width='9' height='9' rx='2' fill='%23fff'/%3E%3Crect x='17' y='6' width='9' height='9' rx='2' fill='%23fff' opacity='.35'/%3E%3Crect x='6' y='17' width='9' height='9' rx='2' fill='%23fff' opacity='.35'/%3E%3C/svg%3E">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo" aria-hidden="true"></span>
-      <h1>SmartZone</h1>
-    </div>
-    <div class="topbar-right">
-      <label class="sr-only" for="room-select">Room</label>
-      <select id="room-select"></select>
-      <span id="online-badge" class="badge badge-muted">connecting…</span>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top" aria-label="SmartZone home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>SmartZone</a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#problem" class="hide-sm">Problem</a>
+        <a href="#use-cases" class="hide-xs">Use cases</a>
+        <a href="#how" class="hide-sm">How it works</a>
+        <a href="#prototype">Prototype</a>
+        <a href="#architecture" class="hide-sm">Architecture</a>
+        <a href="#downloads" class="hide-xs">Downloads</a>
+        <a href="/dashboard/">Live dashboard</a>
+      </nav>
     </div>
   </header>
 
-  <main>
-    <section class="panel" aria-labelledby="zones-title">
-      <div class="panel-head">
-        <h2 id="zones-title">Zones</h2>
-        <div class="legend">
-          <span><i class="dot dot-present"></i>Occupied</span>
-          <span><i class="dot dot-hold"></i>Off-delay</span>
-          <span><i class="dot dot-empty"></i>Empty</span>
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Occupancy-based appliance control</span>
+          <h1 style="margin-top:16px">Power only where<br><em>people are.</em></h1>
+          <p class="lede">SmartZone splits a room into zones and switches lights, fans and AC on only in the zones where people are sitting. When a zone empties, it waits a few minutes, then switches it off.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#prototype">Try the prototype</a>
+            <a class="btn" href="/dashboard/">Open live dashboard</a>
+            <a class="btn" href="https://github.com/anshuu-prajapati/smartZone" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.19c0 .21.15.46.55.38A8 8 0 0 0 8 0z"/></svg>
+              GitHub
+            </a>
+          </div>
+          <div class="hero-facts">
+            <span>Detects people sitting still</span>
+            <span>Works without internet</span>
+            <span>No cameras</span>
+            <span>Uses existing wiring</span>
+          </div>
+        </div>
+        <div class="compare" aria-label="Comparison of a room with ordinary switches and with SmartZone">
+          <figure>
+            <div class="mini-room all-on" aria-hidden="true">
+              <div class="mini-zone lit"><span class="person"></span></div>
+              <div class="mini-zone lit"></div>
+              <div class="mini-zone lit"></div>
+              <div class="mini-zone lit"></div>
+            </div>
+            <figcaption><strong>Room switch</strong><span class="waste">3 of 4 zones lit, no one there</span></figcaption>
+          </figure>
+          <figure>
+            <div class="mini-room" aria-hidden="true">
+              <div class="mini-zone lit"><span class="person"></span></div>
+              <div class="mini-zone"></div>
+              <div class="mini-zone"></div>
+              <div class="mini-zone"></div>
+            </div>
+            <figcaption><strong>SmartZone</strong><span class="saved">only zone A on</span></figcaption>
+          </figure>
         </div>
       </div>
-      <div id="zone-map" class="zone-map"></div>
     </section>
 
-    <section class="panel" aria-labelledby="circuits-title">
-      <div class="panel-head">
-        <h2 id="circuits-title">Circuits</h2>
-        <span id="config-state" class="muted small"></span>
-      </div>
-      <div id="circuits" class="circuits"></div>
-    </section>
-
-    <section class="panel" aria-labelledby="energy-title">
-      <div class="panel-head">
-        <h2 id="energy-title">Energy</h2>
-        <div class="seg" role="group" aria-label="Time window">
-          <button type="button" data-hours="24" class="active">24 h</button>
-          <button type="button" data-hours="168">7 days</button>
+    <!-- Problem -->
+    <section class="block" id="problem">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">The problem</span>
+          <h2>Rooms are lit and cooled for people who aren't there</h2>
+          <p>In classrooms, libraries, labs and offices, lights, fans and ACs run across the whole room even when people sit in only one part of it. The switches don't let anyone do better.</p>
+        </div>
+        <div class="problem-grid">
+          <div class="card"><span class="big-q">1 switch</span><h3>Switches cover whole rooms</h3><p>A light row or fan group runs from one switch, from the front of the room to the back. You can't light just the corner where people sit.</p></div>
+          <div class="card"><span class="big-q">Part-full</span><h3>Partial occupancy is normal</h3><p>A small class in a big hall, a library at opening time, an office on a hybrid-work day. A half-empty room is the usual case, not the exception.</p></div>
+          <div class="card"><span class="big-q">Nobody</span><h3>Nobody walks over to switch off</h3><p>People don't cross a room to turn off the empty side, and motion sensors switch off on people reading or typing, so staff disable them.</p></div>
         </div>
       </div>
-      <div class="stats">
-        <div class="stat"><span class="stat-label">Used</span><span id="e-used" class="stat-value">–</span></div>
-        <div class="stat"><span class="stat-label">Room-switch baseline</span><span id="e-base" class="stat-value">–</span></div>
-        <div class="stat"><span class="stat-label">Saved</span><span id="e-saved" class="stat-value">–</span></div>
-        <div class="stat"><span class="stat-label">Data coverage</span><span id="e-cov" class="stat-value">–</span></div>
-      </div>
-      <div id="chart" class="chart" role="img" aria-label="Hourly energy used versus baseline"></div>
-      <p class="muted small">
-        Baseline = the same room with ordinary switches, with everything on whenever anyone is in the room.
-        Periods with no data from the device are left out, not estimated.
-      </p>
     </section>
 
-    <section class="panel" aria-labelledby="settings-title">
-      <div class="panel-head"><h2 id="settings-title">Settings</h2></div>
-      <form id="delay-form" class="row">
-        <label for="off-delay">Off-delay (seconds, 30–1800)</label>
-        <input id="off-delay" type="number" min="30" max="1800" step="10" required>
-        <button type="submit">Save</button>
-      </form>
-      <div id="admin-row" class="row" hidden>
-        <label for="admin-key">Admin key</label>
-        <input id="admin-key" type="password" autocomplete="off">
+    <!-- Use cases -->
+    <section class="block" id="use-cases">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Use cases</span>
+          <h2>Where SmartZone fits</h2>
+          <p>Any large room where people sit in groups and the lighting, fans or cooling cover more space than the people use.</p>
+        </div>
+        <div class="cases">
+          <article class="card case">
+            <div class="case-top">
+              <span class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="10" rx="1.5"/><path d="M7 20h10M12 14v6"/></svg></span>
+              <div><h3>Classrooms and lecture halls</h3><div class="who">Schools, colleges, coaching centres</div></div>
+            </div>
+            <dl>
+              <div><dt>The situation</dt><dd>An elective with a handful of students in a large room, all sitting near the front.</dd></div>
+              <div><dt>What SmartZone does</dt><dd>Front-row lights and the fans over the occupied seats run. The back rows stay off. The AC runs while anyone is in the room.</dd></div>
+            </dl>
+          </article>
+          <article class="card case">
+            <div class="case-top">
+              <span class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5a1 1 0 0 1 1-1h4v15H5a1 1 0 0 1-1-1zM9 4h4v15H9zM14.5 5.2l3.8-1 3.2 13.6-3.8 1z"/></svg></span>
+              <div><h3>Libraries and reading halls</h3><div class="who">College and public libraries, study rooms</div></div>
+            </div>
+            <dl>
+              <div><dt>The situation</dt><dd>A few readers spread across the hall in the early morning or late evening, sitting still for an hour at a time.</dd></div>
+              <div><dt>What SmartZone does</dt><dd>Radar keeps a zone on for a still reader, where motion sensors would switch it off. Empty reading bays switch off after the delay.</dd></div>
+            </dl>
+          </article>
+          <article class="card case">
+            <div class="case-top">
+              <span class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M8 7V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M3 13h18"/></svg></span>
+              <div><h3>Offices and labs</h3><div class="who">Open-plan offices, computer labs, workshops</div></div>
+            </div>
+            <dl>
+              <div><dt>The situation</dt><dd>On hybrid-work days half the desks are empty. Lab benches are used in shifts.</dd></div>
+              <div><dt>What SmartZone does</dt><dd>Desk bays with nobody in them switch off. Circuits that must stay on, such as equipment, are set to "On" from the dashboard.</dd></div>
+            </dl>
+          </article>
+          <article class="card case">
+            <div class="case-top">
+              <span class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M5 20v-5h14v5M7 15v-3h10v3M9 12V9h6v3M12 4v5"/></svg></span>
+              <div><h3>Auditoriums and seminar halls</h3><div class="who">Event halls, conference rooms</div></div>
+            </div>
+            <dl>
+              <div><dt>The situation</dt><dd>A small talk in a big hall, or a rehearsal with only the stage and front rows in use.</dd></div>
+              <div><dt>What SmartZone does</dt><dd>Zones map to seating blocks. The AC lockout protects compressors when people come and go.</dd></div>
+            </dl>
+          </article>
+        </div>
       </div>
-      <p id="settings-msg" class="muted small" aria-live="polite"></p>
     </section>
 
-    <section class="panel" aria-labelledby="events-title">
-      <div class="panel-head"><h2 id="events-title">Recent device reports</h2></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Time</th><th>Reason</th><th>Occupied zones</th><th>Circuits on</th></tr></thead>
-          <tbody id="events"></tbody>
-        </table>
+    <!-- How it works -->
+    <section class="block" id="how">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">How it works</span>
+          <h2>From someone sitting down to a logged kilowatt-hour</h2>
+        </div>
+        <ol class="steps">
+          <li class="card"><h3>Detect</h3><p>A 24 GHz mmWave radar in each zone detects people, including the small movement of someone sitting still.</p></li>
+          <li class="card"><h3>Decide</h3><p>The ESP32 marks the zone active and works out which circuits serve it. A shared circuit stays on while any of its zones is in use.</p></li>
+          <li class="card"><h3>Switch</h3><p>Relays switch lights and fans. The AC gets its own remote's full-state IR command; no relay ever cuts its compressor.</p></li>
+          <li class="card"><h3>Hold</h3><p>When a zone empties, a 3-minute off-delay runs (adjustable 30 s – 30 min), so nothing flickers when someone steps out.</p></li>
+          <li class="card"><h3>Log</h3><p>The device reports every change and every 30 s. The dashboard shows energy used against what the same room would use with ordinary switches.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Prototype -->
+    <section class="block" id="prototype">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Interactive prototype</span>
+          <h2>Try it: seat people and watch the room respond</h2>
+          <p>This is the firmware's zone logic, ported line for line to JavaScript, running Room 101's real configuration: four zones, two light rows, two fan groups and one split AC. Click a zone to seat or remove people. Energy figures here are simulated from the room's power ratings.</p>
+        </div>
+        <div class="proto">
+          <div class="card proto-panel">
+            <div class="proto-toolbar">
+              <div>
+                <div class="small muted">Simulated time</div>
+                <div class="clock" id="sim-clock">09:00:00</div>
+              </div>
+              <div class="seg" role="group" aria-label="Simulation speed" id="speed">
+                <button type="button" data-speed="1">1×</button>
+                <button type="button" data-speed="10" class="active">10×</button>
+                <button type="button" data-speed="60">60×</button>
+              </div>
+            </div>
+            <div id="sim-board"></div>
+            <div class="scenarios" aria-label="Scenarios">
+              <button type="button" class="btn btn-sm" data-scenario="front">Small class at the front</button>
+              <button type="button" class="btn btn-sm" data-scenario="scattered">Library, scattered readers</button>
+              <button type="button" class="btn btn-sm" data-scenario="full">Full room</button>
+              <button type="button" class="btn btn-sm" data-scenario="leave">Everyone leaves</button>
+            </div>
+          </div>
+          <div class="card proto-panel">
+            <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+              <div class="stat"><span class="stat-label">SmartZone used</span><span class="stat-value" id="sim-used">0.000 kWh</span><span class="stat-sub" id="sim-used-w">0 W now</span></div>
+              <div class="stat"><span class="stat-label">Room-switch baseline</span><span class="stat-value" id="sim-base">0.000 kWh</span><span class="stat-sub" id="sim-base-w">0 W now</span></div>
+              <div class="stat" style="grid-column:1 / -1"><span class="stat-label">Saved so far (simulated)</span><span class="stat-value good" id="sim-saved">–</span><span class="stat-sub">Baseline: everything on whenever anyone is in the room</span></div>
+            </div>
+            <div class="control-row">
+              <div class="row-head"><label for="sim-delay">Off-delay</label><output id="sim-delay-out" for="sim-delay">3:00</output></div>
+              <input type="range" id="sim-delay" min="30" max="600" step="30" value="180">
+            </div>
+            <div>
+              <div class="small muted" style="margin-bottom:8px">Circuits (Auto follows the zones; On/Off is a manual override)</div>
+              <div class="circuits" id="sim-circuits"></div>
+            </div>
+            <div>
+              <div class="small muted" style="margin-bottom:6px">Event log</div>
+              <div class="log" id="sim-log" aria-live="polite"></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="btn btn-sm" id="sim-reset">Reset simulation</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture -->
+    <section class="block" id="architecture">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Architecture</span>
+          <h2>Decisions are made in the room. The server keeps the records.</h2>
+          <p>If Wi-Fi or the server goes down, switching carries on. The server stores reports, sends settings back, and works out energy figures.</p>
+        </div>
+        <div class="arch">
+          <div class="card tier">
+            <span class="pill pill-on tag">Edge · per room</span>
+            <h3>ESP32 controller</h3>
+            <ul>
+              <li>4 × HLK-LD2410C mmWave sensors</li>
+              <li>4-channel relay module (lights, fans)</li>
+              <li>IR LED for the split AC</li>
+              <li>Zone logic, off-delay, AC lockout</li>
+              <li>Settings kept in flash</li>
+            </ul>
+          </div>
+          <div class="link-arrow">HTTPS<br>on change<br>+ every 30 s</div>
+          <div class="card tier">
+            <span class="pill pill-on tag">Server</span>
+            <h3>FastAPI + SQLite</h3>
+            <ul>
+              <li>Stores every device report</li>
+              <li>Replies with the current settings</li>
+              <li>Energy: used vs. room-switch baseline</li>
+              <li>Device key + admin key</li>
+              <li>Caddy for HTTPS at smartzone.anshu.tech</li>
+            </ul>
+          </div>
+          <div class="link-arrow">same<br>origin</div>
+          <div class="card tier">
+            <span class="pill pill-on tag">Web</span>
+            <h3>Portal and dashboard</h3>
+            <ul>
+              <li>Live zone map and circuits</li>
+              <li>Per-circuit Auto / On / Off</li>
+              <li>Off-delay setting</li>
+              <li>Hourly energy chart</li>
+              <li>This portal and its downloads</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card pipeline" aria-label="Delivery pipeline">
+          <strong style="font-family:var(--font-display)">Delivery</strong>
+          <span class="step">git push to main</span>
+          <span class="step">GitHub Actions: tests + firmware compile</span>
+          <span class="step">deploy over SSH</span>
+          <span class="step">health check</span>
+          <img src="https://github.com/anshuu-prajapati/smartZone/actions/workflows/ci-cd.yml/badge.svg" alt="CI/CD status" height="20" style="margin-left:auto">
+        </div>
+      </div>
+    </section>
+
+    <!-- Decisions -->
+    <section class="block" id="decisions">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Engineering choices</span>
+          <h2>Why it is built this way</h2>
+        </div>
+        <div class="decisions">
+          <div class="card decision"><h3>mmWave radar, not PIR</h3><p>PIR sensors see only motion, so they switch the lights off on someone reading. 24 GHz radar picks up breathing-level movement and keeps the zone on.</p></div>
+          <div class="card decision"><h3>The shared-circuit rule</h3><p>Real rooms have light rows and fans that span several zones. A circuit switches off only when every zone it serves is empty, so SmartZone works on existing wiring.</p></div>
+          <div class="card decision"><h3>AC by IR, with a 3-minute lockout</h3><p>Cutting power to a compressor damages ACs. SmartZone sends the AC's full state (power, mode, 24 °C) over IR and keeps it off for at least 3 minutes after switching off.</p></div>
+          <div class="card decision"><h3>Edge-first and offline-safe</h3><p>Sensing and switching never wait for the network. Reporting runs as a separate task, and missed reports are covered by the next 30-second snapshot.</p></div>
+          <div class="card decision"><h3>A fair savings baseline</h3><p>Savings are measured against ordinary switches used perfectly (everything off the moment the room empties), not against "on all day". Gaps in data are left out, not guessed.</p></div>
+          <div class="card decision"><h3>No cameras</h3><p>Radar reports presence only. No images, no identities, nothing to leak.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Status -->
+    <section class="block" id="status">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Build status</span>
+          <h2>What is built and how it is checked</h2>
+        </div>
+        <div class="card table-wrap">
+          <table class="status-table">
+            <thead><tr><th>Part</th><th>What it does</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Zone logic <br><code>zone_logic.h</code></td><td>Off-delay, shared circuits, overrides, AC lockout. Plain C++ with PC unit tests; the prototype above is a port of it.</td><td><span class="pill pill-on">Tested in CI</span></td></tr>
+              <tr><td>ESP32 firmware <br><code>smartzone.ino</code></td><td>Sensors, relays, IR, non-blocking HTTPS reporting, settings in flash.</td><td><span class="pill pill-on">Compiled in CI</span></td></tr>
+              <tr><td>Backend API <br><code>backend/app</code></td><td>Device reports, settings, overrides, energy accounting, event history.</td><td><span class="pill pill-on">Tested · live</span></td></tr>
+              <tr><td>Dashboard and portal</td><td>Live control of the room; this site and its downloads.</td><td><span class="pill pill-on">Live</span></td></tr>
+              <tr><td>Savings audit tool <br><code>tools/audit</code></td><td>Turns a one-week walk-through audit into a measured waste share and kWh estimate.</td><td><span class="pill pill-on">Tested in CI</span></td></tr>
+              <tr><td>Hardware prototype</td><td>Sensors, relays and IR on a real ESP32 in a room.</td><td><span class="pill pill-hold">In progress</span></td></tr>
+              <tr><td>Savings audit</td><td>One-week walk-through audit of real rooms.</td><td><span class="pill pill-hold">Planned</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live -->
+    <section class="block" id="live">
+      <div class="container">
+        <div class="card live">
+          <div style="display:grid;gap:6px">
+            <h3>Live dashboard <span class="pill pill-off" id="live-pill">checking…</span></h3>
+            <p class="muted" id="live-text">The live dashboard shows the real room once its ESP32 is reporting.</p>
+          </div>
+          <a class="btn btn-primary" href="/dashboard/">Open dashboard</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Downloads -->
+    <section class="block" id="downloads">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Submission</span>
+          <h2>Documents and media</h2>
+          <p>Everything submitted for the project, in one place.</p>
+        </div>
+        <div class="media-row" id="media-row" hidden>
+          <video id="demo-video" controls preload="metadata" playsinline></video>
+          <div class="shots" id="shots"></div>
+        </div>
+        <div class="downloads" id="downloads-list"></div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="block end" id="team">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Team</span>
+          <h2>Team SmartZone</h2>
+        </div>
+        <div class="card team">
+          <span class="avatar" aria-hidden="true">A</span>
+          <div>
+            <h3>Anshu</h3>
+            <div class="muted small">Team Leader</div>
+            <div class="small" style="margin-top:6px"><span class="mono">anshuuprajapati01@gmail.com</span></div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <footer class="footer">
+    <div class="container">
+      <span>SmartZone · open source under the MIT licence</span>
+      <span><a href="https://github.com/anshuu-prajapati/smartZone" target="_blank" rel="noopener">GitHub</a> · <a href="/dashboard/">Live dashboard</a> · <a href="/docs">API docs</a></span>
+    </div>
+  </footer>
+
+  <script src="/assets/zone-logic.js"></script>
+  <script src="/assets/board.js"></script>
+  <script src="/assets/portal.js"></script>
 </body>
 </html>

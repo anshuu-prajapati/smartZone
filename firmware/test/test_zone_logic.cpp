@@ -75,9 +75,9 @@ static void test_shared_circuit_waits_for_all_zones() {
   auto c = make(10000);
   c.update(Z0 | Z1, 0);
   c.update(Z1, 1000);       // A leaves
-  c.update(Z1, 20000);      // A long empty, B still present
+  c.update(Z1, 21000);      // A long empty, B still present (last seen t=21000)
   CHECK(c.circuitOn(0));
-  c.update(0, 21000);       // B leaves
+  c.update(0, 21100);       // B leaves
   c.update(0, 30999);
   CHECK(c.circuitOn(0));
   c.update(0, 31000);

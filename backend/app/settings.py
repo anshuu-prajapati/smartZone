@@ -20,6 +20,7 @@ DEFAULT_MAX_GAP_S = 105.0
 class Settings:
     db_path: Path = BACKEND_DIR / "smartzone.db"
     rooms_file: Path = BACKEND_DIR / "rooms.json"
+    submission_dir: Path = BACKEND_DIR.parent / "submission"
     device_key: str = "change-me"
     # Empty = dashboard write endpoints are open (fine on a closed demo LAN).
     admin_key: str = ""
