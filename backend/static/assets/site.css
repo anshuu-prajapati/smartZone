@@ -79,12 +79,10 @@ code, .mono { font-family: var(--font-mono); font-size: 0.88em; }
 }
 .nav-inner { display: flex; align-items: center; gap: 20px; height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--fg); font: 700 1.1rem/1 var(--font-display); }
-.brand-mark {
-  width: 26px; height: 26px; border-radius: 7px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px;
-  background: var(--surface); border: 1px solid var(--line);
-}
-.brand-mark i { border-radius: 2px; background: var(--off-soft); }
-.brand-mark i:nth-child(1), .brand-mark i:nth-child(4) { background: var(--accent); }
+.brand-mark { width: 28px; height: 28px; flex: none; display: block; }
+.brand-mark .bm-tile { fill: var(--line); }
+.brand-mark .bm-lit { fill: var(--accent); }
+.brand-mark .bm-z { fill: none; stroke: var(--fg); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 .nav-links { display: flex; gap: 4px; margin-left: auto; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
 .nav-links a {
   color: var(--muted); text-decoration: none; font-size: 0.9rem; padding: 8px 10px; border-radius: 8px; white-space: nowrap;

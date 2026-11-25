@@ -125,6 +125,7 @@ section.block { padding-block: 88px 0; }
 
 /* Downloads */
 .downloads { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.downloads > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 @media (max-width: 900px) { .downloads { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .downloads { grid-template-columns: 1fr; } }
 .dl { padding: 16px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; text-decoration: none; color: inherit; transition: border-color 0.15s, transform 0.15s; }

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    .t{fill:#d3ddd9}.l{fill:#0f7a62}.z{stroke:#14201c}
+    @media (prefers-color-scheme: dark){.t{fill:#2c3934}.l{fill:#3cc49f}.z{stroke:#e3ebe8}}
+  </style>
+  <rect class="t" x="4" y="4" width="56" height="56" rx="14"/>
+  <path class="l" d="M17 17 H47 L17 47 Z"/>
+  <path class="z" d="M17 17 H47 L17 47 H47" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

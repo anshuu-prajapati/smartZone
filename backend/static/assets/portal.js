@@ -235,6 +235,7 @@
     { name: "08_Project_Screenshots", title: "Project screenshots", desc: "Portal, prototype and dashboard.", dir: true },
     { name: "09_Pitch_Script.pdf", title: "Pitch script", desc: "Timed script for the spoken pitch." },
     { name: "10_Tools_and_Components", title: "Tools and components", desc: "Hardware and software images with credits.", dir: true, anchor: "#build-kit" },
+    { name: "11_Logo", title: "Logo", desc: "SmartZone logo as SVG and PNG, with and without the name, for light and dark backgrounds.", dir: true },
   ];
 
   function fmtSize(bytes) {
