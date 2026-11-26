@@ -227,7 +227,7 @@
   const DELIVERABLES = [
     { name: "01_Project_Proposal.pdf", title: "Project proposal", desc: "Problem, solution, use cases, architecture, impact and roadmap." },
     { name: "02_Presentation.pptx", title: "Presentation", desc: "Slide deck with speaker notes." },
-    { name: "03_Demo_Video.mp4", title: "Demo video", desc: "Walkthrough of the prototype and live dashboard." },
+    { name: "03_Demo_Video.mp4", title: "Demo video", desc: "30-second tour: the hardware, local control, reporting to Amazon EC2 and the CI/CD pipeline." },
     { name: "04_Architecture.png", title: "Architecture diagram", desc: "Edge, server, web and the CI/CD pipeline." },
     { name: "05_GitHub_Link.txt", title: "GitHub link", desc: "Source code repository." },
     { name: "06_Live_Demo_Link.txt", title: "Live demo links", desc: "Portal, dashboard and prototype URLs." },
