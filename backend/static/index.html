@@ -55,7 +55,34 @@
             <span>Uses existing wiring</span>
           </div>
         </div>
-        <div class="compare" aria-label="Comparison of a room with ordinary switches and with SmartZone">
+        <figure class="hero-video">
+          <div class="hero-video-frame">
+            <video id="hero-video" src="/downloads/03_Demo_Video.mp4" poster="/assets/demo-poster.jpg" muted loop playsinline preload="auto" aria-label="30-second SmartZone tour: hardware, local control, reporting to Amazon EC2 and the CI/CD pipeline"></video>
+            <button class="hero-video-sound" id="hero-video-sound" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="snd-off" d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="snd-on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>Sound on</span>
+            </button>
+          </div>
+          <figcaption>30-second tour: the hardware, how it keeps working offline, and how it runs on Amazon EC2.</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="block" id="problem">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">The problem</span>
+          <h2>Rooms are lit and cooled for people who aren't there</h2>
+          <p>In classrooms, libraries, labs and offices, lights, fans and ACs run across the whole room even when people sit in only one part of it. The switches don't let anyone do better.</p>
+        </div>
+        <div class="problem-grid">
+          <div class="card"><span class="big-q">1 switch</span><h3>Switches cover whole rooms</h3><p>A light row or fan group runs from one switch, from the front of the room to the back. You can't light just the corner where people sit.</p></div>
+          <div class="card"><span class="big-q">Part-full</span><h3>Partial occupancy is normal</h3><p>A small class in a big hall, a library at opening time, an office on a hybrid-work day. A half-empty room is the usual case, not the exception.</p></div>
+          <div class="card"><span class="big-q">Nobody</span><h3>Nobody walks over to switch off</h3><p>People don't cross a room to turn off the empty side, and motion sensors switch off on people reading or typing, so staff disable them.</p></div>
+        </div>
+        <div class="compare compare-problem" aria-label="Comparison of a room with ordinary switches and with SmartZone">
           <figure>
             <div class="mini-room all-on" aria-hidden="true">
               <div class="mini-zone lit"><span class="person"></span></div>
@@ -74,23 +101,6 @@
             </div>
             <figcaption><strong>SmartZone</strong><span class="saved">only zone A on</span></figcaption>
           </figure>
-        </div>
-      </div>
-    </section>
-
-    <!-- Problem -->
-    <section class="block" id="problem">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow">The problem</span>
-          <h2>Rooms are lit and cooled for people who aren't there</h2>
-          <p>In classrooms, libraries, labs and offices, lights, fans and ACs run across the whole room even when people sit in only one part of it. The switches don't let anyone do better.</p>
-        </div>
-        <div class="problem-grid">
-          <div class="card"><span class="big-q">1 switch</span><h3>Switches cover whole rooms</h3><p>A light row or fan group runs from one switch, from the front of the room to the back. You can't light just the corner where people sit.</p></div>
-          <div class="card"><span class="big-q">Part-full</span><h3>Partial occupancy is normal</h3><p>A small class in a big hall, a library at opening time, an office on a hybrid-work day. A half-empty room is the usual case, not the exception.</p></div>
-          <div class="card"><span class="big-q">Nobody</span><h3>Nobody walks over to switch off</h3><p>People don't cross a room to turn off the empty side, and motion sensors switch off on people reading or typing, so staff disable them.</p></div>
-        </div>
       </div>
     </section>
 
@@ -355,7 +365,7 @@
           <p>Everything submitted for the project, in one place.</p>
         </div>
         <div class="media-row" id="media-row" hidden>
-          <video id="demo-video" controls preload="metadata" playsinline poster="/assets/demo-poster.jpg"></video>
+          <a id="media-main" href="/downloads/04_Architecture.png" target="_blank" rel="noopener"><img src="/downloads/04_Architecture.png" alt="SmartZone architecture: ESP32 in each room, FastAPI on Amazon EC2, web portal and CI/CD" loading="lazy"></a>
           <div class="shots" id="shots"></div>
         </div>
         <div class="downloads" id="downloads-list"></div>

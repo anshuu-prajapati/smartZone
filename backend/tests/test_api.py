@@ -117,6 +117,12 @@ def test_live_dashboard_served(client):
     assert "Live dashboard" in r.text
 
 
+def test_techfest_short_link(client):
+    r = client.get("/techfest", follow_redirects=False)
+    assert r.status_code == 307
+    assert r.headers["location"] == "/downloads/12_Techfest_AWS_Brief.html"
+
+
 def test_downloads_listing(make_client, tmp_path):
     sub = tmp_path / "submission"
     (sub / "08_Project_Screenshots").mkdir(parents=True)

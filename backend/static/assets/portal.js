@@ -236,6 +236,7 @@
     { name: "09_Pitch_Script.pdf", title: "Pitch script", desc: "Timed script for the spoken pitch." },
     { name: "10_Tools_and_Components", title: "Tools and components", desc: "Hardware and software images with credits.", dir: true, anchor: "#build-kit" },
     { name: "11_Logo", title: "Logo", desc: "SmartZone logo as SVG and PNG, with and without the name, for light and dark backgrounds.", dir: true },
+    { name: "12_Techfest_AWS_Brief.html", title: "Techfest AWS brief", desc: "One-page Campus to Cloud (AWS) brief: idea, AWS services used, API and links.", preview: "/techfest" },
   ];
 
   function fmtSize(bytes) {
@@ -243,6 +244,39 @@
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
     return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  }
+
+  // ---- Hero video -------------------------------------------------------------------
+  // Browsers only autoplay muted video, so it starts muted with a "Sound on" button.
+  // It pauses while scrolled out of view, and stays paused for reduced-motion users.
+  function initHeroVideo() {
+    const video = $("hero-video");
+    const sound = $("hero-video-sound");
+    if (!video || !sound) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let wantPlay = !reduce;
+    if (reduce) video.controls = true;
+    const play = () => { const p = video.play(); if (p) p.catch(() => { video.controls = true; }); };
+
+    sound.addEventListener("click", () => {
+      const on = video.muted;
+      video.muted = !on;
+      sound.setAttribute("aria-pressed", String(on));
+      sound.querySelector("span").textContent = on ? "Sound off" : "Sound on";
+      if (on) { video.currentTime = 0; wantPlay = true; play(); }
+    });
+    video.addEventListener("play", () => { wantPlay = true; });
+    video.addEventListener("pause", () => { if (!document.hidden && video.dataset.offscreen !== "1") wantPlay = false; });
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([entry]) => {
+        video.dataset.offscreen = entry.isIntersecting ? "0" : "1";
+        if (!entry.isIntersecting) video.pause();
+        else if (wantPlay) play();
+      }, { threshold: 0.25 }).observe(video);
+    } else if (wantPlay) {
+      play();
+    }
   }
 
   async function initDownloads() {
@@ -275,6 +309,14 @@
         ]),
       ];
       if (!href) return el("div", { class: "card dl missing" }, inner);
+      if (d.preview) {
+        // Two actions, so the card itself is not a link (links cannot nest).
+        inner[1].append(el("div", { class: "dl-actions" }, [
+          el("a", { class: "btn btn-primary btn-sm", href: d.preview, target: "_blank", rel: "noopener", text: "Open preview" }),
+          el("a", { class: "btn btn-sm", href, download: d.name, text: "Download" }),
+        ]));
+        return el("div", { class: "card dl" }, inner);
+      }
       const attrs = { class: "card dl", href };
       if (!d.dir) {
         if (["pdf", "png", "txt", "mp4"].includes(ext)) attrs.target = "_blank";
@@ -285,12 +327,10 @@
     });
     $("downloads-list").replaceChildren(...cards);
 
-    const video = byName["03_Demo_Video.mp4"];
     const shots = (byName["08_Project_Screenshots"] || {}).children || [];
-    if (video || shots.length) {
+    if (byName["04_Architecture.png"] || shots.length) {
       $("media-row").hidden = false;
-      if (video) $("demo-video").src = video.url;
-      else $("demo-video").replaceWith(el("img", { src: (byName["04_Architecture.png"] || {}).url || "", alt: "SmartZone architecture" }));
+      if (!byName["04_Architecture.png"]) $("media-main").remove();
       $("shots").replaceChildren(...shots.slice(0, 4).map((s) =>
         el("a", { href: s.url, target: "_blank", rel: "noopener" }, [el("img", { src: s.url, alt: s.name.replace(/[_-]/g, " ").replace(/\.\w+$/, ""), loading: "lazy" })])));
     }
@@ -368,6 +408,7 @@
     } catch (_) { /* keep fallback */ }
     initSim();
     initLive();
+    initHeroVideo();
     initDownloads();
     initKit();
   }

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartZone · Campus to Cloud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f2f5f4; --surface:#fff; --fg:#14201c; --muted:#56685f; --line:#d3ddd9; --accent:#0f7a62; --soft:#d9efe7; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0e1412; --surface:#161e1b; --fg:#e3ebe8; --muted:#93a59e; --line:#283430; --accent:#3cc49f; --soft:#15362d; } }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.6 Inter, system-ui, sans-serif }
+  main { max-width:860px; margin:0 auto; padding:48px 16px 80px }
+  .kicker { font:500 13px JetBrains Mono, monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--accent) }
+  h1 { font:700 clamp(36px,6vw,56px)/1.05 "Space Grotesk", sans-serif; margin:8px 0 12px; letter-spacing:-.02em }
+  h1 span { color:var(--accent) }
+  h2 { font:700 26px/1.2 "Space Grotesk", sans-serif; margin:0 0 12px }
+  .lead { color:var(--muted); font-size:19px; margin:0 0 28px }
+  .links { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:0 0 32px }
+  .links a { display:block; padding:14px 16px; border-radius:12px; background:var(--surface); border:1px solid var(--line); color:var(--fg); text-decoration:none }
+  .links a b { display:block; color:var(--accent); font:500 12px JetBrains Mono, monospace; letter-spacing:.1em; text-transform:uppercase }
+  .links a:hover { border-color:var(--accent) }
+  section { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px 24px; margin:0 0 18px }
+  p { margin:0 0 12px } ul { margin:0; padding-left:20px } li { margin:0 0 8px }
+  video { width:100%; border-radius:12px; border:1px solid var(--line); background:#000; display:block }
+  code { font:500 14px JetBrains Mono, monospace; background:var(--soft); padding:1px 6px; border-radius:6px }
+  footer { color:var(--muted); font-size:14px; margin-top:28px }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Techfest IIT Bombay · Campus to Cloud Hackathon (AWS) · Round 1</div>
+  <h1>Smart<span>Zone</span></h1>
+  <p class="lead">Zone-level smart energy control for Indian classrooms and offices, deployed on Amazon EC2. Team NOVA AI.</p>
+
+  <div class="links">
+    <a href="https://smartzone.anshu.tech/"><b>Live prototype</b>smartzone.anshu.tech</a>
+    <a href="https://smartzone.anshu.tech/dashboard/"><b>Live dashboard</b>/dashboard</a>
+    <a href="https://github.com/anshuu-prajapati/smartZone"><b>Code repository</b>GitHub</a>
+    <a href="https://smartzone.anshu.tech/downloads/03_Demo_Video.mp4"><b>Demo video</b>30 seconds</a>
+  </div>
+
+  <section>
+    <h2>Demo video</h2>
+    <video controls preload="metadata" src="https://smartzone.anshu.tech/downloads/03_Demo_Video.mp4"></video>
+  </section>
+
+  <section>
+    <h2>Idea brief</h2>
+    <p><strong>Problem.</strong> Indian classrooms, labs and offices waste a large share of their electricity on lights, fans and ACs running in empty parts of a room. Fifteen students in one corner of a 60-seat room still power every light row and fan. Wall switches treat the whole room as one unit, and PIR timers switch lights off on students who are sitting still. For colleges and schools on commercial tariffs, this is a recurring, avoidable cost.</p>
+    <p><strong>Solution.</strong> SmartZone divides a room into zones. 24 GHz mmWave sensors (HLK-LD2410C) detect people even when they sit still, and an ESP32 keeps only the appliances near them running. Empty zones switch off after a configurable delay. It understands shared wiring: a light row serving two zones turns off only when both are empty. ACs are controlled through their own IR protocol with a 3-minute compressor lockout, never by a relay. Switching logic runs on the ESP32 itself, so the room keeps working if Wi-Fi or the cloud goes down. No cameras.</p>
+    <p><strong>Cloud layer.</strong> Each ESP32 reports to a FastAPI backend on AWS. The live dashboard shows zone occupancy, manual overrides and the off-delay, and compares actual energy use against a room-switch baseline, leaving out periods with no data instead of estimating them.</p>
+    <p><strong>Impact.</strong> About ₹3,000 of hardware per room, retrofits existing wiring, and gives savings measured in kWh. Suits schools, colleges, offices and auditoriums.</p>
+  </section>
+
+  <section>
+    <h2>Build summary: AWS services used</h2>
+    <ul>
+      <li><strong>Amazon EC2 (Ubuntu)</strong> hosts the FastAPI backend, run by uvicorn as a hardened systemd service, plus the web portal and dashboard, behind Caddy for automatic HTTPS at smartzone.anshu.tech.</li>
+      <li><strong>Amazon EBS</strong>: the instance's volume stores the SQLite database of device reports and room configuration, so data survives restarts.</li>
+      <li><strong>EC2 security groups</strong>: only ports 80 and 443 (web) and SSH for deployment are open; the API listens on localhost behind Caddy.</li>
+      <li><strong>Deployment pipeline</strong>: GitHub Actions runs backend tests, firmware zone-logic tests, an ESP32 compile and a JS/firmware parity check, then deploys to EC2 over SSH and verifies <code>/api/health</code>.</li>
+    </ul>
+    <p style="margin-top:12px"><strong>Why EC2.</strong> The ESP32 needs a stable HTTPS endpoint and the backend needs a persistent database. EC2 with EBS provides both on the Free Tier without changing the existing code.</p>
+  </section>
+
+  <section>
+    <h2>API</h2>
+    <ul>
+      <li><code>POST /api/device/report</code> ESP32 state report, on change and every 30 s</li>
+      <li><code>GET /api/rooms/{room}/status</code> live zones, circuits and settings</li>
+      <li><code>GET /api/rooms/{room}/energy</code> usage vs. room-switch baseline</li>
+      <li><code>GET /api/health</code> liveness check</li>
+    </ul>
+  </section>
+
+  <footer>Team NOVA AI · Anshu Prajapati (Team Leader) · Sarvesh Swami</footer>
+</main>
+</body>
+</html>

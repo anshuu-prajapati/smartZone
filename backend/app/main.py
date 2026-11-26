@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import energy
@@ -20,6 +21,9 @@ from .rooms import RoomDef, load_rooms
 from .settings import Settings
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+
+
+TECHFEST_BRIEF = "12_Techfest_AWS_Brief.html"
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -191,6 +195,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             else:
                 out.append({"name": p.name, "is_dir": False, "size": p.stat().st_size, "url": f"/downloads/{quote(p.name)}"})
         return out
+
+    @app.get("/techfest", include_in_schema=False)
+    @app.get("/techfest/", include_in_schema=False)
+    def techfest_brief() -> RedirectResponse:
+        """Short link to the Techfest Campus to Cloud (AWS) brief in the submission folder."""
+        return RedirectResponse(f"/downloads/{TECHFEST_BRIEF}", status_code=307)
 
     if settings.submission_dir.is_dir():
         app.mount("/downloads", StaticFiles(directory=settings.submission_dir), name="downloads")
