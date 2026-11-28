@@ -237,6 +237,7 @@
     { name: "10_Tools_and_Components", title: "Tools and components", desc: "Hardware and software images with credits.", dir: true, anchor: "#build-kit" },
     { name: "11_Logo", title: "Logo", desc: "SmartZone logo as SVG and PNG, with and without the name, for light and dark backgrounds.", dir: true },
     { name: "12_Techfest_AWS_Brief.html", title: "Techfest AWS brief", desc: "One-page Campus to Cloud (AWS) brief: idea, AWS services used, API and links.", preview: "/techfest" },
+    { name: "13_3D_Setup_Lab.html", title: "3D setup lab", desc: "Interactive 3D model of Room 101 with the simulator, 11 build steps and the pin map.", preview: "/lab" },
   ];
 
   function fmtSize(bytes) {

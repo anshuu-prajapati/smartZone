@@ -24,6 +24,7 @@
         <a href="#use-cases" class="hide-xs">Use cases</a>
         <a href="#how" class="hide-sm">How it works</a>
         <a href="#prototype">Prototype</a>
+        <a href="#lab" class="hide-sm">3D lab</a>
         <a href="#architecture" class="hide-sm">Architecture</a>
         <a href="#build-kit" class="hide-sm">Build kit</a>
         <a href="#downloads" class="hide-xs">Downloads</a>
@@ -224,6 +225,34 @@
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <button type="button" class="btn btn-sm" id="sim-reset">Reset simulation</button>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3D setup lab -->
+    <section class="block" id="lab">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">3D setup lab</span>
+          <h2>See Room 101 in 3D, then build it step by step</h2>
+          <p>A 3D model of the prototype classroom with its sensors, control box, lights, fans and AC. Seat people and watch circuits switch, follow the 11 build steps with the camera flying to each part, and check every pin.</p>
+        </div>
+        <div class="card lab">
+          <a class="lab-shot" href="/lab" target="_blank" rel="noopener" aria-label="Open the 3D setup lab">
+            <img src="/assets/lab-preview.jpg" alt="3D classroom with four zones: people seated in zone A, front lights and left fans on, sensor range shown in green" loading="lazy" width="1060" height="860">
+          </a>
+          <div class="lab-body">
+            <dl class="lab-tabs">
+              <div><dt>Simulate</dt><dd>Tap zones to seat or remove people. Lights, fans and the AC react with the real off-delay and AC lockout, and the energy saved is counted.</dd></div>
+              <div><dt>Setup</dt><dd>11 steps from parts to a working room: sensors, relays, IR for the AC, firmware, backend, zone test and mains safety.</dd></div>
+              <div><dt>Pins</dt><dd>The ESP32 pin map and circuit loads, with a button that draws the wiring in 3D.</dd></div>
+            </dl>
+            <div class="lab-actions">
+              <a class="btn btn-primary" href="/lab" target="_blank" rel="noopener">Open the 3D lab</a>
+              <a class="btn" href="/downloads/13_3D_Setup_Lab.html" download="13_3D_Setup_Lab.html">Download HTML</a>
+            </div>
+            <p class="small muted">Drag to rotate, scroll to zoom. Needs WebGL; the setup guide and pin map work without it.</p>
           </div>
         </div>
       </div>

@@ -24,6 +24,7 @@ STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 
 TECHFEST_BRIEF = "12_Techfest_AWS_Brief.html"
+SETUP_LAB = "13_3D_Setup_Lab.html"
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -201,6 +202,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def techfest_brief() -> RedirectResponse:
         """Short link to the Techfest Campus to Cloud (AWS) brief in the submission folder."""
         return RedirectResponse(f"/downloads/{TECHFEST_BRIEF}", status_code=307)
+
+    @app.get("/lab", include_in_schema=False)
+    @app.get("/lab/", include_in_schema=False)
+    def setup_lab() -> RedirectResponse:
+        """Short link to the interactive 3D setup lab in the submission folder."""
+        return RedirectResponse(f"/downloads/{SETUP_LAB}", status_code=307)
 
     if settings.submission_dir.is_dir():
         app.mount("/downloads", StaticFiles(directory=settings.submission_dir), name="downloads")
